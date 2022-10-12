@@ -1,0 +1,214 @@
+The following queries were ran to compare against dashbaord results.
+
+
+#########################
+# Data Transformations
+#########################
+Opened orders file in Excel and added columns for
+  Orig_Price = Sales/(1-Discount)
+  Disc_Amt = Orig_Price - Sales
+Saved updatd orders file to a csv file and upoaded to BigQuery. 
+Ran the following queries (among others) to confirm correct 
+behavior and calculation assignments in Tableau.
+
+#########################
+# AVERAGE ORDER VALUE
+#########################
+SELECT SUM(Sales)/COUNT(DISTINCT(Order_ID))
+FROM `green-link-358414.Superstore.Orders` 
+WHERE Order_Date BETWEEN '2018-01-01' AND '2018-12-31'
+AND Category='Furniture'
+AND Sub_Category="Tables"
+879.84
+
+SELECT SUM(Sales)/COUNT(DISTINCT(Order_ID))
+FROM `green-link-358414.Superstore.Orders` 
+WHERE Order_Date BETWEEN '2018-01-01' AND '2018-12-31'
+AND Category='Furniture'
+AND Sub_Category="Tables"
+85.52
+
+SELECT SUM(Sales)/COUNT(DISTINCT(Order_ID))
+FROM `green-link-358414.Superstore.Orders` 
+WHERE Order_Date BETWEEN '2016-01-01' AND '2019-12-31'
+AND Category='Technology'
+AND Sub_Category="Machines"
+547.86
+
+#########################
+# BASKET SIZE 
+#########################
+SELECT ROUND((SUM(QUANTITY))/COUNT(DISTINCT(Order_ID)), 0) 
+FROM `green-link-358414.Superstore.Orders`
+
+#########################
+# FULFILLMENT DAYS
+#########################
+SELECT MIN(DATE_DIFF(Ship_Date, Order_Date, DAY))  
+FROM `green-link-358414.Superstore.Orders` 
+0
+
+SELECT AVG(DATE_DIFF(Ship_Date, Order_Date, DAY))  
+FROM `green-link-358414.Superstore.Orders`
+3.96
+
+SELECT MAX(DATE_DIFF(Ship_Date, Order_Date, DAY))  
+FROM `green-link-358414.Superstore.Orders`
+7
+
+SELECT MIN(DATE_DIFF(Ship_Date, Order_Date, DAY))  
+FROM `green-link-358414.Superstore.Orders`
+WHERE Category="Furniture"
+AND Order_Date BETWEEN '2017-01-01' AND '2017-02-01'
+0
+
+SELECT AVG(DATE_DIFF(Ship_Date, Order_Date, DAY))  
+FROM `green-link-358414.Superstore.Orders`
+WHERE Order_Date BETWEEN '2017-01-01' AND '2017-02-01'
+AND Category="Furniture"
+AND Sub_Category='Tables'
+4.25
+
+SELECT MIN(DATE_DIFF(Ship_Date, Order_Date, DAY))  
+FROM `green-link-358414.Superstore.Orders`
+WHERE Order_Date BETWEEN '2016-01-01' AND '2016-02-29'
+AND Category="Furniture"
+AND Sub_Category='Tables'
+2
+
+SELECT AVG(DATE_DIFF(Ship_Date, Order_Date, DAY))  
+FROM `green-link-358414.Superstore.Orders`
+WHERE Order_Date BETWEEN '2016-01-01' AND '2016-02-29'
+AND Category="Office Supplies"
+AND Sub_Category='Appliances'
+3.48
+
+SELECT MAX(DATE_DIFF(Ship_Date, Order_Date, DAY))  
+FROM `green-link-358414.Superstore.Orders`
+WHERE Order_Date BETWEEN '2016-01-01' AND '2016-02-29'
+AND Category="Furniture"
+AND Sub_Category='Tables'
+6
+
+SELECT MAX(DATE_DIFF(Ship_Date, Order_Date, DAY))  
+FROM `green-link-358414.Superstore.Orders`
+WHERE Order_Date BETWEEN '2016-01-01' AND '2016-02-29'
+AND ((Category="Furniture" AND Sub_Category='Tables')
+OR (Category="Office Supplies" AND Sub_Category='Appliances'))
+6
+
+SELECT AVG(DATE_DIFF(Ship_Date, Order_Date, DAY))  
+FROM `green-link-358414.Superstore.Orders`
+WHERE Order_Date BETWEEN '2016-01-01' AND '2016-02-29'
+AND Category="Furniture" 
+AND (Sub_Category='Tables' OR Sub_Category='Furnishings')
+4.5
+
+#########################
+# AVERAGE ORDER DISCOUNT (%) 
+#########################
+SELECT AVG(Disc_Amt/Orig_Price*100)
+FROM `green-link-358414.Superstore.Orders` 
+14.29
+
+SELECT AVG(Disc_Amt/Orig_Price*100)
+FROM `green-link-358414.Superstore.Orders` 
+WHERE (Category='Office Supplies'
+OR Category='Technology')
+13.69
+
+SELECT AVG(Disc_Amt/Orig_Price*100)
+FROM `green-link-358414.Superstore.Orders` 
+WHERE Category='Technology' 
+AND Order_Date BETWEEN '2017-01-01' AND '2017-06-30'
+13.65
+
+SELECT AVG(Disc_Amt/Orig_Price*100)
+FROM `green-link-358414.Superstore.Orders` 
+WHERE Category='Furniture'
+AND Sub_Category='Bookcases' 
+AND Order_Date BETWEEN '2017-01-01' AND '2017-06-30'
+15.63
+
+SELECT AVG(Disc_Amt/Orig_Price*100)
+FROM `green-link-358414.Superstore.Orders` 
+WHERE Order_Date BETWEEN '2017-01-01' AND '2017-06-30'
+AND ((Category="Furniture" AND Sub_Category='Tables')
+OR (Category="Office Supplies" AND Sub_Category='Appliances'))
+19.26
+
+SELECT AVG(Disc_Amt/Orig_Price*100)
+FROM `green-link-358414.Superstore.Orders` 
+WHERE Order_Date BETWEEN '2017-01-01' AND '2017-06-30'
+AND Category='Technology' 
+AND (Sub_Category='Accessories' OR Sub_Category='Copiers')
+11.02
+
+#########################
+# AVERAGE ORDER PROFIT HIGHLIGHT TABLE 
+#########################
+SELECT SUM(Profit)/COUNT(DISTINCT(Order_ID)) 
+FROM `green-link-358414.Superstore.Orders` 
+WHERE Order_Date BETWEEN '2016-01-01' AND '2016-12-31'
+AND Category = 'Furniture'
+36.31
+
+SELECT SUM(Profit)/COUNT(DISTINCT(Order_ID)) 
+FROM `green-link-358414.Superstore.Orders` 
+WHERE Order_Date BETWEEN '2016-01-01' AND '2016-12-31'
+AND Category = 'Furniture'
+AND Segment = 'Corporate'
+46.38
+
+SELECT SUM(Profit)/COUNT(DISTINCT(Order_ID)) 
+FROM `green-link-358414.Superstore.Orders` 
+WHERE Order_Date BETWEEN '2016-01-01' AND '2016-12-31'
+AND Category = 'Furniture'
+AND Sub_Category = 'Tables'
+AND Segment = 'Corporate'
+-107.51
+
+SELECT SUM(Profit)/COUNT(DISTINCT(Order_ID)) 
+FROM `green-link-358414.Superstore.Orders` 
+WHERE Order_Date BETWEEN '2016-01-01' AND '2016-12-31'
+AND Category = 'Technology'
+AND Sub_Category = 'Phones'
+93.62
+
+#########################
+# AVERAGE ORDER DISCOUNT HIGHLIGHT TABLE ($)
+#########################
+SELECT SUM(Disc_Amt)/COUNT(DISTINCT(Order_ID))
+FROM `green-link-358414.Superstore.Orders` 
+WHERE Order_Date BETWEEN '2019-01-01' AND '2019-12-31'
+AND Category='Office Supplies'
+35.98
+
+SELECT SUM(Disc_Amt)/COUNT(DISTINCT(Order_ID))
+FROM `green-link-358414.Superstore.Orders` 
+WHERE Order_Date BETWEEN '2019-01-01' AND '2019-12-31'
+AND Category='Furniture'
+AND Segment='Home Office'
+116.15
+
+SELECT SUM(Disc_Amt)/COUNT(DISTINCT(Order_ID))
+FROM `green-link-358414.Superstore.Orders` 
+WHERE Order_Date BETWEEN '2019-01-01' AND '2019-12-31'
+AND Category='Furniture'
+AND Sub_Category='Chairs'
+88.22
+
+SELECT SUM(Disc_Amt)/COUNT(DISTINCT(Order_ID))
+FROM `green-link-358414.Superstore.Orders` 
+WHERE Order_Date BETWEEN '2019-01-01' AND '2019-12-31'
+AND Category='Office Supplies'
+AND Sub_Category='Paper'
+AND Segment='Consumer'
+8.43
+
+SELECT SUM(Disc_Amt)/COUNT(DISTINCT(Order_ID)) 
+FROM `green-link-358414.Superstore.Orders` 
+WHERE Order_Date BETWEEN '2019-01-01' AND '2019-12-31'
+AND Category = 'Technology'
+AND Sub_Category = 'Copiers'
+87.79

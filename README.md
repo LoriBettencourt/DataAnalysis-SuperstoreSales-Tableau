@@ -1,7 +1,8 @@
 # IN PROGRESS
 # Data Analysis-Superstore Sales Tableau
 
-# Currently working on this at my [Tableau Public](https://public.tableau.com/app/profile/lori.bettencourt) projects site.
+## Dashboard 
+Can be found at my [Tableau Public](https://public.tableau.com/app/profile/lori.bettencourt) site.
 
 ## Data Prep
 Working with previously cleaned and formatted data 
@@ -9,51 +10,24 @@ Working with previously cleaned and formatted data
 ## Metadata Observations/Assumptions
 * 'Quantity' is accounted for in 'Sales' column
 * 'Discount' is a perenctage taken already reflected in 'Sales' column.
-* Discount taken = Discount * Sales/(1-Discount)
+* Discount taken = Discount * Sales/(1-Discount) or computed Orig_Price - Sales
 
 ## Sales Dashboard
-Sales
-1) Avg days to ship = Avg(Ship Date - Order Date)
-2) Avg order value =  Sum(sales)/countd(order id)
-3) Avg basket size = qty/orders = Sum(quantity)/countd(order id)
-4)Avg profit/order = Avg(order profit) = sum(profit)/countd(order id)
-5) Avg discount = Avg(order discount) = sum(discount amt)/countd(order id)
-6) Avg discount %
+### Overview of Calculations
+1) Avg order value =  Sum(sales)/countd(order id)
+2) Avg basket size = qty/orders = Sum(quantity)/countd(order id)
+3) Fulfillment days
+    Min(Ship Date - Order Date)
+    Avg(Ship Date - Order Date)
+    Max(Ship Date - Order Date)
+4) Avg order discount (%) = Avg(discount) = AVG(disc_amt/orig_price)
+5) Avg profit/order = Avg(order profit) = sum(profit)/countd(order id)
+6) Avg discount/order ($) = Avg(order disc_amt) = sum(disc_amt)/countd(order id)
 
 * Filter by Date, Category, and Sub-Category where appropriate.
 
-## SQL Checks (In progress)
-Save orders to a csv file and upoaded to BigQuery. Ran the following queries (among others) to confirm correct behavior and calculation assignments in Tableau.
-
--- SELECT SUM(QUANTITY) 
--- FROM `green-link-358414.Superstore.Orders` 
--- LIMIT 1000
-
--- SELECT COUNT(distinct(order_id)) 
--- FROM `green-link-358414.Superstore.Orders` 
--- LIMIT 1000
-
--- SELECT SUM(Profit)/COUNT(DISTINCT(Order_ID)) 
--- FROM `green-link-358414.Superstore.Orders` 
--- WHERE Order_Date BETWEEN '2016-01-01' AND '2016-12-31'
-
--- SELECT SUM(Profit)/COUNT(DISTINCT(Order_ID)) 
--- FROM `green-link-358414.Superstore.Orders` 
--- WHERE Order_Date BETWEEN '2016-01-01' AND '2016-12-31'
--- AND Category = 'Furniture'
-
--- SELECT SUM(Profit)/COUNT(DISTINCT(Order_ID)) 
--- FROM `green-link-358414.Superstore.Orders` 
--- WHERE Order_Date BETWEEN '2016-01-01' AND '2016-12-31'
--- AND Category = 'Furniture'
--- AND Segment = 'Corporate'
-
--- SELECT SUM(Profit)/COUNT(DISTINCT(Order_ID)) 
--- FROM `green-link-358414.Superstore.Orders` 
--- WHERE Order_Date BETWEEN '2016-01-01' AND '2016-12-31'
--- AND Category = 'Furniture'
--- AND Segment = 'Corporate'
--- AND Sub_Category = 'Tables'
+## SQL Checks  
+Queries against the dashboard reports can be reviewed at [SQLChecks.txt](/SQLChecks.txt)
 
 ## Resources
 [Luke Barosse's: My Tableau tutorial playlist](https://www.youtube.com/playlist?list=PL_CkpxkuPiT_sRLeU_5JSArjc0P1lGU2_)  (options/formatting)  
